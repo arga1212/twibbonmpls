@@ -33,7 +33,7 @@ const App = () => {
   const handleWheel = (e) => {
     if (image) {
       e.preventDefault(); 
-      const zoomSensitivity = 0.025; // Lebih kecil = lebih smooth
+      const zoomSensitivity = 0.005; // Sangat smooth
       const delta = e.deltaY > 0 ? -zoomSensitivity : zoomSensitivity;
       const newScale = Math.min(Math.max(scale + delta, 0.1), 10);
       setScale(newScale);
@@ -67,8 +67,8 @@ const App = () => {
 
   const handleDownload = async () => {
     if (editorRef.current) {
-      // Dapatkan gambar dari editor
-      const editorCanvas = editorRef.current.getImage();
+      // Dapatkan gambar dari editor menggunakan getImageScaledToCanvas agar aman
+      const editorCanvas = editorRef.current.getImageScaledToCanvas();
       
       // Buat canvas final dengan ukuran pasti 1080x1350
       const finalCanvas = document.createElement('canvas');
@@ -76,8 +76,12 @@ const App = () => {
       finalCanvas.height = 1350;
       const ctx = finalCanvas.getContext('2d');
       
-      // Gambar foto dari editor ke canvas final
-      ctx.drawImage(editorCanvas, 0, 0, 1080, 1350);
+      // Isi dengan warna putih agar tidak blank hitam jika transparan
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 1080, 1350);
+      
+      // Gambar foto dari editor ke canvas final (di-stretch ke 1080x1350 agar tidak mengecil di pojok)
+      ctx.drawImage(editorCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
 
       // Gambar bingkai di atasnya
       const frameImg = new Image();
@@ -168,7 +172,7 @@ const App = () => {
                     <input
                       type="range"
                       onChange={(e) => setScale(parseFloat(e.target.value))}
-                      min="0.1" max="10" step="0.01" value={scale}
+                      min="0.1" max="10" step="0.001" value={scale}
                     />
                 </div>
                 <div className="slider-group">
