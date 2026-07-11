@@ -33,7 +33,7 @@ const App = () => {
   const handleWheel = (e) => {
     if (image) {
       e.preventDefault(); 
-      const zoomSensitivity = 0.1;
+      const zoomSensitivity = 0.025; // Lebih kecil = lebih smooth
       const delta = e.deltaY > 0 ? -zoomSensitivity : zoomSensitivity;
       const newScale = Math.min(Math.max(scale + delta, 0.1), 10);
       setScale(newScale);
@@ -67,16 +67,26 @@ const App = () => {
 
   const handleDownload = async () => {
     if (editorRef.current) {
-      const canvas = editorRef.current.getImageScaledToCanvas();
-      const ctx = canvas.getContext('2d');
+      // Dapatkan gambar dari editor
+      const editorCanvas = editorRef.current.getImage();
+      
+      // Buat canvas final dengan ukuran pasti 1080x1350
+      const finalCanvas = document.createElement('canvas');
+      finalCanvas.width = 1080;
+      finalCanvas.height = 1350;
+      const ctx = finalCanvas.getContext('2d');
+      
+      // Gambar foto dari editor ke canvas final
+      ctx.drawImage(editorCanvas, 0, 0, 1080, 1350);
 
+      // Gambar bingkai di atasnya
       const frameImg = new Image();
       frameImg.src = FRAME_URL;
       frameImg.crossOrigin = "anonymous"; 
       
       frameImg.onload = () => {
-        ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL('image/png', 1.0);
+        ctx.drawImage(frameImg, 0, 0, 1080, 1350);
+        const dataUrl = finalCanvas.toDataURL('image/png', 1.0);
         const link = document.createElement('a');
         link.download = 'TWIBBON-MPLS-2026.png';
         link.href = dataUrl;
@@ -158,7 +168,7 @@ const App = () => {
                     <input
                       type="range"
                       onChange={(e) => setScale(parseFloat(e.target.value))}
-                      min="0.1" max="10" step="0.05" value={scale}
+                      min="0.1" max="10" step="0.01" value={scale}
                     />
                 </div>
                 <div className="slider-group">
