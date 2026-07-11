@@ -5,6 +5,13 @@ import './app.css';
 
 const FRAME_URL = "/Twibbon MPLS.png"; 
 const LOGO_URL = "/logo.png";
+const OUTPUT_WIDTH = 1440;
+const OUTPUT_HEIGHT = 1800;
+const MIN_SCALE = 1;
+const MAX_SCALE = 10;
+const WHEEL_ZOOM_STEP = 0.0025;
+
+const clampScale = (value) => Math.min(Math.max(value, MIN_SCALE), MAX_SCALE);
 
 const App = () => {
   const [image, setImage] = useState(null);
@@ -33,10 +40,8 @@ const App = () => {
   const handleWheel = (e) => {
     if (image) {
       e.preventDefault(); 
-      const zoomSensitivity = 0.005;
-      const delta = e.deltaY > 0 ? -zoomSensitivity : zoomSensitivity;
-      const newScale = Math.min(Math.max(scale + delta, 1), 10);
-      setScale(newScale);
+      const delta = e.deltaY > 0 ? -WHEEL_ZOOM_STEP : WHEEL_ZOOM_STEP;
+      setScale(currentScale => clampScale(currentScale + delta));
     }
   };
 
@@ -53,10 +58,11 @@ const App = () => {
 
   const handleTouchMove = (e) => {
     if (e.touches.length === 2 && lastPinchDist.current) {
+      e.preventDefault();
       const dist = getDistance(e.touches[0], e.touches[1]);
-      const zoomFactor = dist / lastPinchDist.current;
-      const newScale = Math.min(Math.max(scale * zoomFactor, 1), 10);
-      setScale(newScale);
+      const rawZoomFactor = dist / lastPinchDist.current;
+      const smoothedZoomFactor = 1 + ((rawZoomFactor - 1) * 0.45);
+      setScale(currentScale => clampScale(currentScale * smoothedZoomFactor));
       lastPinchDist.current = dist; 
     }
   };
@@ -67,7 +73,6 @@ const App = () => {
 
   const handleDownload = async () => {
     if (editorRef.current) {
-      // getImage() automatically returns a canvas correctly cropped to 1080x1350
       const canvas = editorRef.current.getImage();
       const ctx = canvas.getContext('2d');
       
@@ -140,16 +145,18 @@ const App = () => {
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
               >
-                <AvatarEditor
-                  ref={editorRef}
-                  image={image}
-                  width={1080}
-                  height={1350}
-                  border={0}
-                  scale={scale}
-                  rotate={rotate}
-                  style={{ width: '100%', height: '100%', background: '#152247', cursor: 'move' }}
-                />
+                <div className="photo-editor-layer">
+                  <AvatarEditor
+                    ref={editorRef}
+                    image={image}
+                    width={OUTPUT_WIDTH}
+                    height={OUTPUT_HEIGHT}
+                    border={0}
+                    scale={scale}
+                    rotate={rotate}
+                    style={{ width: '100%', height: '100%', background: '#152247', cursor: 'move', touchAction: 'none' }}
+                  />
+                </div>
                 <img src={FRAME_URL} alt="Frame" className="frame-overlay" />
               </div>
 
@@ -160,7 +167,7 @@ const App = () => {
                     <input
                       type="range"
                       onChange={(e) => setScale(parseFloat(e.target.value))}
-                      min="1" max="10" step="0.001" value={scale}
+                      min={MIN_SCALE} max={MAX_SCALE} step="0.0005" value={scale}
                     />
                 </div>
                 <div className="slider-group">

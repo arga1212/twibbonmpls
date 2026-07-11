@@ -170,7 +170,14 @@
   border: 2px solid var(--metallic-gold);
 }
 
-.twibbon-wrapper > div {
+.photo-editor-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform: none;
+}
+
+.photo-editor-layer > div {
   width: 100% !important;
   height: 100% !important;
 }
@@ -183,6 +190,7 @@
   height: 100%;
   pointer-events: none;
   z-index: 10;
+  transform: none !important;
 }
 
 /* CONTROLS */
