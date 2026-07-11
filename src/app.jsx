@@ -198,25 +198,24 @@ const App = () => {
         <div className="card caption-card">
           <h2>Caption</h2>
           <div className="caption-box">
-            <p>I'm ready to find direction and become better with LDKS SMK Telkom Sidoarjo 2026!</p>
+            <p></p>
             <br/>
             
-            <p>Halo teman-teman,<br/>
-            Perkenalkan, saya <b>[Nama kamu]</b> dari <b>[Organisasi Kamu]</b> selaku Peserta LDKS SMK Telkom Sidoarjo siap menjalani rangkaian kegiatan LDKS dengan penuh semangat, disiplin, dan aktif. Saya siap belajar, berproses, dan tumbuh menjadi pribadi yang lebih tangguh dan bertanggung jawab.</p>
+            <p><br/>
+             <b></b><b></b> </p>
             <br/>
             
-            <p>Motto Hidup:<br/>
-            <b>[Isi dengan motto kamu]</b></p>
+            <p><br/>
+            <b></b></p>
             <br/>
             
-            <blockquote className="quote">"From Inspiration to Transformation"</blockquote>
+            <blockquote className="quote">""</blockquote>
             
-            <p>See you at LDKS SMK Telkom Sidoarjo 2026.</p>
+            <p></p>
             <br/>
             
             <p style={{color: 'var(--accent-blue)', fontWeight: 'bold', fontSize: '0.85rem'}}>
-                @smktelkomsda @osis.smktelkomsda @mpk.smktelkomsda<br/>
-                #LDKS2026 #LDKSKOMDA2026 #Leadership
+               <br/>
             </p>
           </div>
           
