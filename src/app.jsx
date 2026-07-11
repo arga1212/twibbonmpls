@@ -33,9 +33,9 @@ const App = () => {
   const handleWheel = (e) => {
     if (image) {
       e.preventDefault(); 
-      const zoomSensitivity = 0.005; // Sangat smooth
+      const zoomSensitivity = 0.005;
       const delta = e.deltaY > 0 ? -zoomSensitivity : zoomSensitivity;
-      const newScale = Math.min(Math.max(scale + delta, 0.1), 10);
+      const newScale = Math.min(Math.max(scale + delta, 1), 10);
       setScale(newScale);
     }
   };
@@ -55,7 +55,7 @@ const App = () => {
     if (e.touches.length === 2 && lastPinchDist.current) {
       const dist = getDistance(e.touches[0], e.touches[1]);
       const zoomFactor = dist / lastPinchDist.current;
-      const newScale = Math.min(Math.max(scale * zoomFactor, 0.1), 10);
+      const newScale = Math.min(Math.max(scale * zoomFactor, 1), 10);
       setScale(newScale);
       lastPinchDist.current = dist; 
     }
@@ -67,30 +67,18 @@ const App = () => {
 
   const handleDownload = async () => {
     if (editorRef.current) {
-      // Dapatkan gambar dari editor menggunakan getImageScaledToCanvas agar aman
-      const editorCanvas = editorRef.current.getImageScaledToCanvas();
+      // getImage() automatically returns a canvas correctly cropped to 1080x1350
+      const canvas = editorRef.current.getImage();
+      const ctx = canvas.getContext('2d');
       
-      // Buat canvas final dengan ukuran pasti 1080x1350
-      const finalCanvas = document.createElement('canvas');
-      finalCanvas.width = 1080;
-      finalCanvas.height = 1350;
-      const ctx = finalCanvas.getContext('2d');
-      
-      // Isi dengan warna putih agar tidak blank hitam jika transparan
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, 1080, 1350);
-      
-      // Gambar foto dari editor ke canvas final (di-stretch ke 1080x1350 agar tidak mengecil di pojok)
-      ctx.drawImage(editorCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
-
-      // Gambar bingkai di atasnya
+      // Draw frame on top
       const frameImg = new Image();
       frameImg.src = FRAME_URL;
       frameImg.crossOrigin = "anonymous"; 
       
       frameImg.onload = () => {
-        ctx.drawImage(frameImg, 0, 0, 1080, 1350);
-        const dataUrl = finalCanvas.toDataURL('image/png', 1.0);
+        ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/png', 1.0);
         const link = document.createElement('a');
         link.download = 'TWIBBON-MPLS-2026.png';
         link.href = dataUrl;
@@ -160,7 +148,7 @@ const App = () => {
                   border={0}
                   scale={scale}
                   rotate={rotate}
-                  style={{ background: '#152247', cursor: 'move' }}
+                  style={{ width: '100%', height: '100%', background: '#152247', cursor: 'move' }}
                 />
                 <img src={FRAME_URL} alt="Frame" className="frame-overlay" />
               </div>
@@ -172,7 +160,7 @@ const App = () => {
                     <input
                       type="range"
                       onChange={(e) => setScale(parseFloat(e.target.value))}
-                      min="0.1" max="10" step="0.001" value={scale}
+                      min="1" max="10" step="0.001" value={scale}
                     />
                 </div>
                 <div className="slider-group">
