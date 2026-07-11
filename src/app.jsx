@@ -13,6 +13,14 @@ const WHEEL_ZOOM_STEP = 0.0025;
 
 const clampScale = (value) => Math.min(Math.max(value, MIN_SCALE), MAX_SCALE);
 
+const loadImage = (src) => new Promise((resolve, reject) => {
+  const image = new Image();
+  image.crossOrigin = "anonymous";
+  image.onload = () => resolve(image);
+  image.onerror = reject;
+  image.src = src;
+});
+
 const App = () => {
   const [image, setImage] = useState(null);
   const [scale, setScale] = useState(1.2); 
@@ -73,25 +81,33 @@ const App = () => {
 
   const handleDownload = async () => {
     if (editorRef.current) {
-      const canvas = editorRef.current.getImage();
-      const ctx = canvas.getContext('2d');
-      
-      // Draw frame on top
-      const frameImg = new Image();
-      frameImg.src = FRAME_URL;
-      frameImg.crossOrigin = "anonymous"; 
-      
-      frameImg.onload = () => {
+      try {
+        const photoCanvas = editorRef.current.getImageScaledToCanvas();
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = OUTPUT_WIDTH;
+        finalCanvas.height = OUTPUT_HEIGHT;
+
+        const ctx = finalCanvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.fillStyle = '#152247';
+        ctx.fillRect(0, 0, OUTPUT_WIDTH, OUTPUT_HEIGHT);
+        ctx.drawImage(photoCanvas, 0, 0, OUTPUT_WIDTH, OUTPUT_HEIGHT);
+
+        const frameImg = await loadImage(FRAME_URL);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.globalAlpha = 1;
         ctx.globalCompositeOperation = 'source-over';
-        ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL('image/png', 1.0);
+        ctx.drawImage(frameImg, 0, 0, OUTPUT_WIDTH, OUTPUT_HEIGHT);
+
+        const dataUrl = finalCanvas.toDataURL('image/png', 1.0);
         const link = document.createElement('a');
         link.download = 'TWIBBON-MPLS-2026.png';
         link.href = dataUrl;
         link.click();
-      };
+      } catch (err) {
+        console.error('Gagal membuat twibbon:', err);
+      }
     }
   };
 
@@ -157,6 +173,7 @@ const App = () => {
                     border={0}
                     scale={scale}
                     rotate={rotate}
+                    disableCanvasRotation={true}
                     style={{ width: '100%', height: '100%', background: '#152247', cursor: 'move', touchAction: 'none' }}
                   />
                 </div>
@@ -200,25 +217,7 @@ const App = () => {
         <div className="card caption-card">
           <h2>Caption</h2>
           <div className="caption-box">
-            <p></p>
-            <br/>
-            
-            <p><br/>
-             <b></b><b></b> </p>
-            <br/>
-            
-            <p><br/>
-            <b></b></p>
-            <br/>
-            
-            <blockquote className="quote">""</blockquote>
-            
-            <p></p>
-            <br/>
-            
-            <p style={{color: 'var(--accent-blue)', fontWeight: 'bold', fontSize: '0.85rem'}}>
-               <br/>
-            </p>
+            {captionText}
           </div>
           
           <button 
