@@ -3,11 +3,10 @@ import AvatarEditor from 'react-avatar-editor';
 import { useDropzone } from 'react-dropzone';
 import './app.css';
 
-// ⚠️ Pastikan file frame ada di folder public
-const FRAME_URL = "/frame-ldks.png"; 
+const FRAME_URL = "/Twibbon MPLS.png"; 
+const LOGO_URL = "/logo.png";
 
 const App = () => {
-  // --- STATE ---
   const [image, setImage] = useState(null);
   const [scale, setScale] = useState(1.2); 
   const [rotate, setRotate] = useState(0); 
@@ -16,7 +15,6 @@ const App = () => {
   const editorRef = useRef(null);
   const lastPinchDist = useRef(null); 
 
-  // --- LOGIC DROPZONE ---
   const onDrop = useCallback(acceptedFiles => {
     if (acceptedFiles && acceptedFiles.length > 0) {
       setImage(acceptedFiles[0]);
@@ -32,18 +30,16 @@ const App = () => {
     noClick: !!image 
   });
 
-  // --- LOGIC ZOOM (MOUSE SCROLL) ---
   const handleWheel = (e) => {
     if (image) {
       e.preventDefault(); 
-      const zoomSensitivity = 0.05;
+      const zoomSensitivity = 0.1;
       const delta = e.deltaY > 0 ? -zoomSensitivity : zoomSensitivity;
-      const newScale = Math.min(Math.max(scale + delta, 1), 5);
+      const newScale = Math.min(Math.max(scale + delta, 0.1), 10);
       setScale(newScale);
     }
   };
 
-  // --- LOGIC ZOOM (PINCH / CUBIT DI HP) ---
   const getDistance = (touch1, touch2) => {
     return Math.hypot(touch2.pageX - touch1.pageX, touch2.pageY - touch1.pageY);
   };
@@ -59,7 +55,7 @@ const App = () => {
     if (e.touches.length === 2 && lastPinchDist.current) {
       const dist = getDistance(e.touches[0], e.touches[1]);
       const zoomFactor = dist / lastPinchDist.current;
-      const newScale = Math.min(Math.max(scale * (zoomFactor), 1), 5);
+      const newScale = Math.min(Math.max(scale * zoomFactor, 0.1), 10);
       setScale(newScale);
       lastPinchDist.current = dist; 
     }
@@ -69,7 +65,6 @@ const App = () => {
     lastPinchDist.current = null;
   };
 
-  // --- DOWNLOAD LOGIC ---
   const handleDownload = async () => {
     if (editorRef.current) {
       const canvas = editorRef.current.getImageScaledToCanvas();
@@ -83,15 +78,14 @@ const App = () => {
         ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
         const dataUrl = canvas.toDataURL('image/png', 1.0);
         const link = document.createElement('a');
-        link.download = 'TWIBBON-LDKS-2025.png';
+        link.download = 'TWIBBON-MPLS-2026.png';
         link.href = dataUrl;
         link.click();
       };
     }
   };
 
-  // --- CAPTION LOGIC BARU ---
-  const captionText = `💫 I'm ready to find direction and become better with LDKS SMK Telkom Sidoarjo 2025! 💫\n\nHalo teman-teman 👋🏻\nPerkenalkan, saya [Nama kamu] dari [Organisasi Kamu] selaku Peserta LDKS SMK Telkom Sidoarjo siap menjalani rangkaian kegiatan LDKS dengan penuh semangat, disiplin, dan aktif. Saya siap belajar, berproses, dan tumbuh menjadi pribadi yang lebih tangguh dan bertanggung jawab.\n\n⏳Motto Hidup\n[Isi dengan motto kamu]\n\n"From Inspiration to Transformation"\nSee you at LDKS SMK Telkom Sidoarjo 2025 👀\n\n@smktelkomsda @osis.smktelkomsda @mpk.smktelkomsda\n#LDKS2025 #LDKSKOMDA2025 #Leadership`;
+  const captionText = `I'm ready to find direction and become better with LDKS SMK Telkom Sidoarjo 2026!\n\nHalo teman-teman,\nPerkenalkan, saya [Nama kamu] dari [Organisasi Kamu] selaku Peserta LDKS SMK Telkom Sidoarjo siap menjalani rangkaian kegiatan LDKS dengan penuh semangat, disiplin, dan aktif. Saya siap belajar, berproses, dan tumbuh menjadi pribadi yang lebih tangguh dan bertanggung jawab.\n\nMotto Hidup:\n[Isi dengan motto kamu]\n\n"From Inspiration to Transformation"\nSee you at LDKS SMK Telkom Sidoarjo 2026.\n\n@smktelkomsda @osis.smktelkomsda @mpk.smktelkomsda\n#LDKS2026 #LDKSKOMDA2026 #Leadership`;
 
   const handleCopyCaption = async () => {
     try {
@@ -105,18 +99,34 @@ const App = () => {
 
   return (
     <div className="app-container">
+      {/* Background Decorations */}
+      <div className="bg-decorations">
+        <div className="crystal-shape crystal-top-left"></div>
+        <div className="crystal-shape crystal-bottom-right"></div>
+      </div>
+
       <div className="main-wrapper">
+        <div className="header-section">
+          <img src={LOGO_URL} alt="SMK Telkom Sidoarjo Logo" className="school-logo" />
+          <h1 className="title-main">MPLS & Leadership SMK Telkom Sidoarjo 2026</h1>
+          <p className="subtitle">SOLID IN UNITY, STRONGER INTEGRITY</p>
+        </div>
         
-        {/* KARTU EDITOR */}
-        <div className="card twibbon-card">
-          <h1>Twibbon LDKS SMK Telkom Sidoarjo 2025</h1>
-          <p className="subtitle">Cubit (Pinch) untuk Zoom, Geser untuk atur posisi.</p>
+        <div className="content-wrapper">
+          {/* KARTU EDITOR */}
+          <div className="card twibbon-card">
+          <h2 style={{fontSize: '1.2rem', marginBottom: '0.5rem', fontFamily: 'var(--font-heading)', color: 'var(--white-crystal)'}}>Upload Foto</h2>
+          <p className="subtitle" style={{marginBottom: '1.5rem'}}>Cubit untuk zoom, geser untuk atur posisi.</p>
           
           {!image ? (
             <div {...getRootProps()} className={`dropzone-area ${isDragActive ? 'dropzone-active' : ''}`}>
               <input {...getInputProps()} />
-              <span className="icon-upload">☁️</span>
-              <p>Klik atau Tarik Foto ke Sini</p>
+              <svg className="icon-upload" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{margin: '0 auto 1rem auto', color: 'var(--metallic-gold)'}}>
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <p style={{letterSpacing: '0.5px'}}>KLIK ATAU TARIK FOTO</p>
             </div>
           ) : (
             <div className="editor-container">
@@ -132,11 +142,11 @@ const App = () => {
                   ref={editorRef}
                   image={image}
                   width={1080}
-                  height={1080}
+                  height={1350}
                   border={0}
                   scale={scale}
                   rotate={rotate}
-                  style={{ background: '#fff', cursor: 'move' }}
+                  style={{ background: '#152247', cursor: 'move' }}
                 />
                 <img src={FRAME_URL} alt="Frame" className="frame-overlay" />
               </div>
@@ -144,57 +154,59 @@ const App = () => {
               {/* SLIDER CONTROLS */}
               <div className="controls">
                 <div className="slider-group">
-                    <span className="slider-label">🔍 Zoom</span>
+                    <span className="slider-label">Zoom</span>
                     <input
                       type="range"
                       onChange={(e) => setScale(parseFloat(e.target.value))}
-                      min="1" max="5" step="0.05" value={scale}
+                      min="0.1" max="10" step="0.05" value={scale}
                     />
                 </div>
                 <div className="slider-group">
-                    <span className="slider-label">🔄 Putar</span>
+                    <span className="slider-label">Rotasi</span>
                     <input
                       type="range"
                       onChange={(e) => setRotate(parseFloat(e.target.value))}
                       min="-180" max="180" step="1" value={rotate}
                     />
                 </div>
+                
+                <div className="divider"></div>
+
                 <button className="btn btn-ganti" onClick={() => setImage(null)}>
-                  📂 Ganti Foto Lain
+                  Ganti Foto
                 </button>
               </div>
               
               <button className="btn btn-download" onClick={handleDownload}>
-                DOWNLOAD DISNI
+                Unduh Twibbon
               </button>
             </div>
           )}
         </div>
 
-        {/* KARTU CAPTION (UPDATE BARU) */}
+        {/* KARTU CAPTION */}
         <div className="card caption-card">
-          <h2>📋 Caption</h2>
+          <h2>Caption</h2>
           <div className="caption-box">
-            <p>💫 I'm ready to find direction and become better with LDKS SMK Telkom Sidoarjo 2025! 💫</p>
+            <p>I'm ready to find direction and become better with LDKS SMK Telkom Sidoarjo 2026!</p>
             <br/>
             
-            <p>Halo teman-teman 👋🏻<br/>
+            <p>Halo teman-teman,<br/>
             Perkenalkan, saya <b>[Nama kamu]</b> dari <b>[Organisasi Kamu]</b> selaku Peserta LDKS SMK Telkom Sidoarjo siap menjalani rangkaian kegiatan LDKS dengan penuh semangat, disiplin, dan aktif. Saya siap belajar, berproses, dan tumbuh menjadi pribadi yang lebih tangguh dan bertanggung jawab.</p>
             <br/>
             
-            <p>⏳Motto Hidup<br/>
+            <p>Motto Hidup:<br/>
             <b>[Isi dengan motto kamu]</b></p>
             <br/>
             
             <blockquote className="quote">"From Inspiration to Transformation"</blockquote>
             
-            <p>See you at LDKS SMK Telkom Sidoarjo 2025 👀</p>
+            <p>See you at LDKS SMK Telkom Sidoarjo 2026.</p>
             <br/>
             
-            {/* Bagian Tag & Hashtag */}
-            <p style={{color: '#c8102e', fontWeight: 'bold', fontSize: '0.85rem'}}>
+            <p style={{color: 'var(--accent-blue)', fontWeight: 'bold', fontSize: '0.85rem'}}>
                 @smktelkomsda @osis.smktelkomsda @mpk.smktelkomsda<br/>
-                #LDKS2025 #LDKSKOMDA2025 #Leadership
+                #LDKS2026 #LDKSKOMDA2026 #Leadership
             </p>
           </div>
           
@@ -206,6 +218,7 @@ const App = () => {
           </button>
         </div>
 
+        </div>
       </div>
     </div>
   );
