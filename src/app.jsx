@@ -111,7 +111,20 @@ const App = () => {
     }
   };
 
-  const captionText = `I'm ready to find direction and become better with LDKS SMK Telkom Sidoarjo 2026!\n\nHalo teman-teman,\nPerkenalkan, saya [Nama kamu] dari [Organisasi Kamu] selaku Peserta LDKS SMK Telkom Sidoarjo siap menjalani rangkaian kegiatan LDKS dengan penuh semangat, disiplin, dan aktif. Saya siap belajar, berproses, dan tumbuh menjadi pribadi yang lebih tangguh dan bertanggung jawab.\n\nMotto Hidup:\n[Isi dengan motto kamu]\n\n"From Inspiration to Transformation"\nSee you at LDKS SMK Telkom Sidoarjo 2026.\n\n@smktelkomsda @osis.smktelkomsda @mpk.smktelkomsda\n#LDKS2026 #LDKSKOMDA2026 #Leadership`;
+  const captionText = `I'm ready to learn, grow, and lead with MPLS & Leadership SMK Telkom Sidoarjo 2026! 🚀
+
+Halo teman-teman,
+Perkenalkan, saya [Nama Kamu] dari [Asal Sekolah]. Saya siap menjadi bagian dari MPLS & Leadership SMK Telkom Sidoarjo Tahun Pelajaran 2026/2027. Dengan semangat, disiplin, dan rasa ingin tahu yang tinggi, saya siap mengenal lingkungan sekolah, membangun karakter, menjalin persahabatan baru, serta mengembangkan jiwa kepemimpinan untuk menjadi generasi yang siap menghadapi masa depan.
+
+Motto Hidup:
+[Tulis motto hidup kamu di sini]
+
+"Solid in Unity, Stronger in Integrity."
+See you at MPLS & Leadership SMK Telkom Sidoarjo 2026!
+
+@smktelkomsda
+
+#MPLSRamahAnak #MPLS2026 #MPLSLeadership2026 #SMKTelkomSidoarjo #SKOMDA #DareToLearnDareToAdvance #SolidInUnityStrongerInIntegrity #MasaPengenalanLingkunganSekolah #PelajarBerkarakter #SiapBelajar #GenerasiTelkom #MPLS2026Skomda`;
 
   const handleCopyCaption = async () => {
     try {
